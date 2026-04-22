@@ -1,9 +1,13 @@
 from fastapi import APIRouter
-from app.agents.medical_agent import run_medical_agent
+from pydantic import BaseModel
+from app.agents.medical_agent import run_agent
 
 router = APIRouter()
 
-@router.post("/ask")
-def ask_ai(question: str):
-    response = run_medical_agent(question)
-    return {"response": response}
+class Request(BaseModel):
+    patient_id: str
+    doctor_input: str
+
+@router.post("/process")
+def process(data: Request):
+    return run_agent(data.patient_id, data.doctor_input)
